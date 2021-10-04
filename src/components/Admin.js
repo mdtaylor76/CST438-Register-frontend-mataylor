@@ -27,10 +27,12 @@ class Admin extends Component {
   
       console.log("Name: " + student.name + " email: " + student.email);
    
-      fetch(`${SERVER_URL}/addstudent?email=${student.email}&name=${student.name}`,
+      //fetch(`${SERVER_URL}/addstudent?email=${student.email}&name=${student.name}`,
+      fetch(`${SERVER_URL}/addstudent`,
       {
         method: 'POST',
-        headers: { 'X-XSRF-TOKEN': token }
+        headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+		    body: JSON.stringify({studentEmail:student.email, studentName: student.name})
       })
       .then(res => {
           if (res.ok) {

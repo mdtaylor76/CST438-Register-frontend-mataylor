@@ -6,12 +6,51 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
+import Cookies from 'js-cookie';
+import {SERVER_URL} from '../constants.js'
+import { ToastContainer, toast } from 'react-toastify';
 
 class AddStudent extends Component {
     constructor(props) {
     super(props);
-    this.state = {open: false, name: '', email: '', status_code: 0 };
+    this.state = {open: false, name: '', email: '', status_code: 0, userType: false};
+    //this.fetchAdmin();
   };
+
+
+  fetchAdmin = () => {
+    console.log("AddStudent.fetchAdmin");
+    const token = Cookies.get('XSRF-TOKEN');
+    
+    fetch(`${SERVER_URL}/userType`, 
+      {  
+        method: 'GET', 
+        headers: { 'X-XSRF-TOKEN': token },
+        credentials: 'include'
+      } )
+    .then(response => response.json())
+    .then(result => {
+      console.log('Success:', result);
+      this.state.userType = result;
+      console.log("Usertype1: " + this.state.userType);
+      if(result) {
+        document.getElementById("myBtn").style.visibility = "visable";
+      } else {
+        document.getElementById("myBtn").style.visibility = "hidden";
+      }
+    })
+    .catch(err => {
+      toast.error("Fetch failed.", {
+          position: toast.POSITION.BOTTOM_LEFT
+        });
+        console.error(err); 
+    })
+  }
+
+
+  componentWillMount() {
+    this.fetchAdmin();
+  }
 
   handleClickOpen = () => {
     this.setState( {open:true} );
@@ -28,7 +67,7 @@ class AddStudent extends Component {
     this.setState({[event.target.name]: event.target.value});
   }
 
-// Save course and close modal form
+  // Save course and close modal form
   handleAdd = () => {
     console.log(this.state); 
 
@@ -37,9 +76,10 @@ class AddStudent extends Component {
   }
 
   render()  { 
+    console.log("Usertype: " + this.state.userType);
     return (
         <div>
-          <Button variant="outlined" color="primary" style={{margin: 10}} onClick={this.handleClickOpen}>
+          <Button id="myBtn" variant="outlined" color="primary" style={{margin: 10}} onClick={this.handleClickOpen}>
             Add Student
           </Button>
           <Dialog open={this.state.open} onClose={this.handleClose}>

@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
-import Radio from '@material-ui/core/Radio';
-import {DataGrid} from '@material-ui/data-grid';
 import Grid from '@material-ui/core/Grid';
-import {SEMESTER_LIST} from '../constants.js'
 import AddStudent from './AddStudent';
 import Cookies from 'js-cookie';
 import {SERVER_URL} from '../constants.js';
@@ -31,8 +26,19 @@ class Admin extends Component {
       fetch(`${SERVER_URL}/addstudent`,
       {
         method: 'POST',
-        headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+        //headers: {'Accept': 'application/json','Content-Type': 'application/json'}, //Old
+        headers: { 'Content-Type': 'application/json',
+                   'X-XSRF-TOKEN': token },
+                   credentials: 'include',         
 		    body: JSON.stringify({studentEmail:student.email, studentName: student.name})
+  
+        /*
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json',
+                   'X-XSRF-TOKEN': token },
+                   credentials: 'include', 
+        body: JSON.stringify(course)
+        */
       })
       .then(res => {
           if (res.ok) {
